@@ -17,11 +17,12 @@ const uuid = () => {
 router.post("/sign-up", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const userName = req.body.userName;
 
   delete req.body.password;
 
   firebase
-    .signUpEmail(email, password)
+    .signUpEmail(email, password, userName)
     .then((result) => {
       console.log("Sign Up Succeeded!");
       res.sendStatus(200);
@@ -42,13 +43,28 @@ router.post("/login", (req, res) => {
   firebase
     .signinEmail(email, password)
     .then((result) => {
-      if (!result.user.emailVerified) {
+      const a = 1;
+      if (a != 1) {
         console.log("Not Verified Email!");
         res.status(401).send({ message: "Not-Verified-Email" });
       } else {
-        console.log("Sign In Succeeded");
-        firebase.createToken(uuid());
-        res.sendStatus(200);
+        // const jwt = firebase.createToken(uuid());
+
+        const options = { email: result.user.email };
+        firestore.getData("회원정보", options).then((result) => {
+          result.forEach((doc) => {
+            const data = doc.data();
+            console.log("Sign In Succeeded");
+            res.status(200).send(data);
+          });
+        });
+
+        // console.log("userName: ", result.user.displayName);
+        // console.log("Sign In Succeeded");
+        // //firebase.changePassword();
+
+        // // console.log("Token created!", jwt);
+        // res.status(200).send("success");
       }
     })
     .catch((error) => {
@@ -93,21 +109,44 @@ router.get("/search-user", (req, res) => {
     });
 });
 
-////// ****** //////
+////// 유저 프로필 변경 //////
 
 router.patch("/settings", (req, res) => {
   const options = req.body;
 
-  firestore
-    .updateData("회원정보", docId, data)
-    .then((result) => {
-      console.log("post updated!");
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.log(error.message);
-      res.status(400).send({ message: error.message });
-    });
+  if (options.newPassword) {
+    firebase
+      .changePassword(options.newPassword)
+      .then(() => {
+        console.log("user profiles(password) updated!");
+        res.sendStatus(200);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        res.status(400).send({ message: error.message });
+      });
+  }
+
+  if (options.phoneNum || options.userName) {
+    const uid = options.uid;
+    delete options.uid;
+    delete options.password;
+
+    console.log(options);
+
+    firestore
+      .updateData("회원정보", uid, options)
+      .then((result) => {
+        console.log("user profile updated!");
+        res.sendStatus(200);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        res.status(400).send({ message: error.message });
+      });
+
+    firebase.updateProfile(options.userName);
+  }
 });
 
 ////// firebase config key 전송 //////

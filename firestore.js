@@ -31,6 +31,8 @@ const db = getFirestore();
 exports.addData = (project, data) => {
   const docId = uuid();
 
+  data.uid = docId;
+
   const docRef = db.collection(project).doc(docId);
 
   return new Promise(async (resolve, reject) => {
