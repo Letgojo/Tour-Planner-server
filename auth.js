@@ -57,14 +57,8 @@ router.post("/login", (req, res) => {
             console.log("Sign In Succeeded");
             res.status(200).send(data);
           });
+          
         });
-
-        // console.log("userName: ", result.user.displayName);
-        // console.log("Sign In Succeeded");
-        // //firebase.changePassword();
-
-        // // console.log("Token created!", jwt);
-        // res.status(200).send("success");
       }
     })
     .catch((error) => {
@@ -98,11 +92,7 @@ router.get("/search-user", (req, res) => {
     .getData("회원정보", options)
     .then((result) => {
       console.log("find user!");
-
-      result.forEach((doc) => {
-        console.log(doc.data());
-        res.status(200).send(doc.data());
-      });
+      res.status(200).send(result.data());
     })
     .catch((error) => {
       res.status(404).send({ message: error.message });

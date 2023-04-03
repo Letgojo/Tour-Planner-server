@@ -84,10 +84,13 @@ exports.getData = async (project, options) => {
       .orderBy("date")
       .get();
   } else if (project === "회원정보") {
-    return await db
-      .collection(project)
-      .where("email", "==", options.email)
-      .get();
+    if (options.email) {
+      return await db
+        .collection(project)
+        .where("email", "==", options.email)
+        .get();
+    }
+    return await db.collection(project).doc(options.uid).get();
   }
 };
 
