@@ -8,10 +8,10 @@ const router = require("express").Router();
 
 router.post("/post", (req, res) => {
   const data = req.body;
-  data.date = getDate();
+  data.date = Date.now();
 
   firestore
-    .addData("게시글", data)
+    .addData("post", data)
     .then((result) => {
       console.log("post succeeded!");
       res.status(200).send({ docId: result });
@@ -32,7 +32,7 @@ router.patch("/post", (req, res) => {
   const data = req.body;
 
   firestore
-    .updateData("게시글", docId, data)
+    .updateData("post", docId, data)
     .then((result) => {
       console.log("post updated!");
       res.sendStatus(200);
@@ -49,12 +49,14 @@ router.get("/post", (req, res) => {
   const options = req.query;
 
   firestore
-    .getData("게시글", options)
+    .getData("post", options)
     .then((result) => {
       let jsonResult = [];
 
       result.forEach((doc) => {
-        jsonResult.push(doc.data());
+        const value = doc.data();
+        value.date = convertDateFormat(value.date);
+        jsonResult.push(value);
       });
 
       res.status(200).send(jsonResult);
@@ -72,7 +74,7 @@ router.delete("/post/:id", (req, res) => {
   const docId = req.params.id;
 
   firestore
-    .deleteData("게시글", docId)
+    .deleteData("post", docId)
     .then((result) => {
       console.log("post deleted!");
       res.sendStatus(200);
@@ -90,7 +92,7 @@ router.post("/reply", (req, res) => {
   data.date = getDate();
 
   firestore
-    .addData("댓글", data)
+    .addData("reply", data)
     .then((result) => {
       console.log("reply succeeded!");
       res.status(200).send({ replyId: result });
@@ -109,7 +111,7 @@ router.patch("/reply", (req, res) => {
   const data = req.body;
 
   firestore
-    .updateData("댓글", replyId, data)
+    .updateData("reply", replyId, data)
     .then((result) => {
       console.log("reply edit succeeded!");
       res.sendStatus(200);
@@ -126,7 +128,7 @@ router.get("/reply", (req, res) => {
   const options = req.query;
 
   firestore
-    .getData("댓글", options)
+    .getData("reply", options)
     .then((result) => {
       let jsonResult = [];
 
@@ -149,7 +151,7 @@ router.delete("/reply", (req, res) => {
   const replyId = req.params.id;
 
   firestore
-    .deleteData("댓글", replyId)
+    .deleteData("reply", replyId)
     .then((result) => {
       console.log("reply deleted!");
       res.sendStatus(200);
@@ -162,10 +164,14 @@ router.delete("/reply", (req, res) => {
 
 ////// 날짜 가져오는 함수 //////
 
-const getDate = () => {
-  let today = new Date();
+const convertDateFormat = (date) => {
+  const prevFormat = new Date(date);
 
-  return today.toLocaleDateString() + " " + today.toTimeString().split(" ")[0];
+  return (
+    prevFormat.toLocaleDateString() +
+    " " +
+    prevFormat.toTimeString().split(" ")[0]
+  );
 };
 
 module.exports = router;
