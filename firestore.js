@@ -60,31 +60,28 @@ exports.deleteData = async (project, id) => {
 };
 
 exports.getData = async (project, options) => {
-  if (project === "post") {
+  if (project === "게시글") {
     const docPages = Number(options.pages);
 
-    if (options.docId) { // 나중에 DB 커서 적용해서 제대로 고쳐야 함
+    if (options.docId) {
       const docRef = db.collection(project).doc(options.docId);
       const snapshot = await docRef.get();
       const startAtSnapshot = db
         .collection(project)
-        .orderBy("date", "desc")
+        .orderBy("date")
         .startAfter(snapshot);
 
       return await startAtSnapshot.limit(docPages).get();
     } else {
-      const docRef = db
-        .collection(project)
-        .orderBy("date", "desc")
-        .limit(docPages);
+      const docRef = db.collection(project).orderBy("date").limit(docPages);
 
       return await docRef.get();
     }
-  } else if (project === "reply") {
+  } else if (project === "댓글") {
     return await db
       .collection(project)
       .where("docId", "==", options.docId)
-      .orderBy("date", "desc")
+      .orderBy("date")
       .get();
   } else if (project === "회원정보") {
     if (options.email) {
