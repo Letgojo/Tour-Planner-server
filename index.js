@@ -6,14 +6,20 @@ const boardRouter = require("./board");
 const authRouter = require("./auth");
 
 const { WebSocketServer } = require("ws");
+const { constrainedMemory } = require("process");
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ clientTracking: false, noServer: true });
+const port = 50020;
 
 app.use(express.json());
 
 app.use("/", authRouter);
 app.use("/board", boardRouter);
+
+const onSocketError = (error) => {
+  console.log(error);
+};
 
 // server.on("upgrade", function (request, socket, head) {
 //   socket.on("error", onSocketError);
@@ -25,22 +31,34 @@ app.use("/board", boardRouter);
 //   });
 // });
 
-wss.on("connection", function (ws, request) {
-  const userId = request.session.userId;
+server.on("upgrade", (request, socket, head) => {
+  console.log("upgrade request approach!");
+  socket.on("error", onSocketError);
 
-  map.set(userId, ws);
+  console.log(request);
 
-  ws.on("error", console.error);
+  socket.removeListener("error", onSocketError);
 
-  ws.on("message", function (message) {
-    console.log(`Received message ${message} from user ${userId}`);
-  });
-
-  ws.on("close", function () {
-    map.delete(userId);
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit("connection", ws, request);
   });
 });
 
-server.listen(50020, function () {
-  console.log("Listening on Port 50020");
+wss.on("connection", function (ws, request) {
+  ws.on("open", () => {
+    console.log("opened!");
+  });
+  ws.on("error", console.error);
+
+  ws.on("message", function (message) {
+    console.log(`Received message ${message} from user`);
+  });
+
+  ws.on("close", () => {
+    console.log("connection closed!");
+  });
+});
+
+server.listen(port, function () {
+  console.log("Listening on Port ", port);
 });
