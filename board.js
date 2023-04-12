@@ -8,7 +8,7 @@ const router = require("express").Router();
 
 router.post("/post", (req, res) => {
   const data = req.body;
-  data.date = Date.now();
+  data.date = "" + Date.now();
 
   firestore
     .addData("post", data)
@@ -89,7 +89,7 @@ router.delete("/post/:id", (req, res) => {
 
 router.post("/reply", (req, res) => {
   const data = req.body;
-  data.date = getDate();
+  data.date = Date.now()
 
   firestore
     .addData("reply", data)
@@ -133,7 +133,9 @@ router.get("/reply", (req, res) => {
       let jsonResult = [];
 
       result.forEach((doc) => {
-        jsonResult.push(doc.data());
+        const value = doc.data();
+        value.date = convertDateFormat(value.date);
+        jsonResult.push(value);
       });
 
       res.status(200).send(jsonResult);

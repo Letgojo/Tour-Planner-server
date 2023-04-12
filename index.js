@@ -4,6 +4,9 @@ const express = require("express");
 const http = require("http");
 const boardRouter = require("./board");
 const authRouter = require("./auth");
+const locationRouter = require("./location");
+
+const firestore = require("./firestore");
 
 const { WebSocketServer } = require("ws");
 const { constrainedMemory } = require("process");
@@ -16,6 +19,11 @@ app.use(express.json());
 
 app.use("/", authRouter);
 app.use("/board", boardRouter);
+app.use("/location", locationRouter);
+
+firestore.getData("자연관광", "").then((result) => {
+  
+});
 
 const onSocketError = (error) => {
   console.log(error);
@@ -60,5 +68,5 @@ wss.on("connection", function (ws, request) {
 });
 
 server.listen(port, function () {
-  console.log("Listening on Port ", port);
+  console.log("Listening on Port: ", port);
 });

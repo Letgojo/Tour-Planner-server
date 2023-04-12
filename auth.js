@@ -91,8 +91,11 @@ router.get("/search-user", (req, res) => {
   firestore
     .getData("회원정보", options)
     .then((result) => {
-      console.log("find user!");
-      res.status(200).send(result.data());
+
+      result.forEach(doc => {
+        console.log("find user!");
+        res.status(200).send(doc.data());
+      })
     })
     .catch((error) => {
       res.status(404).send({ message: error.message });

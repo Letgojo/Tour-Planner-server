@@ -63,7 +63,8 @@ exports.getData = async (project, options) => {
   if (project === "post") {
     const docPages = Number(options.pages);
 
-    if (options.docId) { // 나중에 DB 커서 적용해서 제대로 고쳐야 함
+    if (options.docId) {
+      // 나중에 DB 커서 적용해서 제대로 고쳐야 함
       const docRef = db.collection(project).doc(options.docId);
       const snapshot = await docRef.get();
       const startAtSnapshot = db
@@ -93,7 +94,14 @@ exports.getData = async (project, options) => {
         .where("email", "==", options.email)
         .get();
     }
-    return await db.collection(project).doc(options.uid).get();
+  } else {
+    const temp = db.collection(project).doc("대구광역시");
+    const vae = await temp.listCollections();
+
+    vae.forEach((doc) => {
+      console.log(doc.id);
+    });
+    return await temp.listCollections();
   }
 };
 
