@@ -12,8 +12,11 @@ const uuid = () => {
   return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4];
 };
 
-////// 회원가입  //////
-
+/*
+ *
+ *  회원가입
+ *
+ */
 router.post("/sign-up", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -34,8 +37,11 @@ router.post("/sign-up", (req, res) => {
     });
 });
 
-////// 로그인 //////
-
+/*
+ *
+ *  로그인
+ *
+ */
 router.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -57,7 +63,6 @@ router.post("/login", (req, res) => {
             console.log("Sign In Succeeded");
             res.status(200).send(data);
           });
-          
         });
       }
     })
@@ -67,8 +72,11 @@ router.post("/login", (req, res) => {
     });
 });
 
-////// 비밀번호 초기화 //////
-
+/*
+ *
+ *  비밀번호 초기화
+ *
+ */
 router.post("/reset-password", (req, res) => {
   const email = req.body.email;
 
@@ -84,29 +92,40 @@ router.post("/reset-password", (req, res) => {
     });
 });
 
-////// 유저 찾기 //////
+/*
+ *
+ *  사용자 검색 처리
+ *
+ */
 router.get("/search-user", (req, res) => {
   const options = req.query;
 
   firestore
     .getData("회원정보", options)
     .then((result) => {
-
-      result.forEach(doc => {
+      result.forEach((doc) => {
         console.log("find user!");
         res.status(200).send(doc.data());
-      })
+      });
     })
     .catch((error) => {
       res.status(404).send({ message: error.message });
     });
 });
 
-////// 유저 프로필 변경 //////
-
+/*
+ *
+ *  사용자 프로필 설정
+ *
+ */
 router.patch("/settings", (req, res) => {
   const options = req.body;
 
+  /* 
+  
+    비밀번호 변경
+  
+  */
   if (options.newPassword) {
     firebase
       .changePassword(options.newPassword)
@@ -120,6 +139,11 @@ router.patch("/settings", (req, res) => {
       });
   }
 
+  /* 
+  
+    전화번호 또는 닉네임 변경
+  
+  */
   if (options.phoneNum || options.userName) {
     const uid = options.uid;
     delete options.uid;
@@ -142,8 +166,18 @@ router.patch("/settings", (req, res) => {
   }
 });
 
-////// firebase config key 전송 //////
+/*
+ *
+ *  회원 탈퇴
+ *
+ */
+router.delete("/delete-user", (req, res) => {});
 
+/*
+ *
+ *   firebase SDK 키 값 전송
+ *
+ */
 router.get("/config-key", (req, res) => {
   res.status(200).send(firebaseConfigKey.settingValues);
 });

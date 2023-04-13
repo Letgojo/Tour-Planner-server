@@ -4,6 +4,12 @@ const firebase = require("./firebase");
 const firestore = require("./firestore");
 const router = require("express").Router();
 
+/* 
+
+게시글 관련 api 요청 처리 
+
+*/
+
 ////// 게시글 작성 //////
 
 router.post("/post", (req, res) => {
@@ -89,7 +95,7 @@ router.delete("/post/:id", (req, res) => {
 
 router.post("/reply", (req, res) => {
   const data = req.body;
-  data.date = Date.now()
+  data.date = Date.now();
 
   firestore
     .addData("reply", data)

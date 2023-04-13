@@ -13,7 +13,8 @@ const { constrainedMemory } = require("process");
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ clientTracking: false, noServer: true });
-const port = 50020;
+
+const port = 8080;
 
 app.use(express.json());
 
@@ -21,9 +22,11 @@ app.use("/", authRouter);
 app.use("/board", boardRouter);
 app.use("/location", locationRouter);
 
-firestore.getData("자연관광", "").then((result) => {
-  
-});
+// firestore.getData("자연관광", "").then((result) => {
+//   result.forEach((doc) => {
+//     console.log(doc.data());
+//   });
+// });
 
 const onSocketError = (error) => {
   console.log(error);
