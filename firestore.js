@@ -94,14 +94,12 @@ exports.getData = async (project, options) => {
         .where("email", "==", options.email)
         .get();
     }
-  } else {
-    const temp = db.collection(project).doc("대구광역시");
-    const vae = await temp.listCollections();
-
-    vae.forEach((doc) => {
-      console.log(doc.id);
-    });
-    return await temp.listCollections();
+  } else if (project.search("관광") != -1) {
+    return await db
+      .collection(project)
+      .doc(options.city)
+      .collection(options.district)
+      .get();
   }
 };
 

@@ -13,15 +13,13 @@ const { constrainedMemory } = require("process");
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ clientTracking: false, noServer: true });
-const port = 3000;  // 기호에 맞게 수정해서 사용
+const port = 50020;
 
 app.use(express.json());
 
 app.use("/", authRouter);
 app.use("/board", boardRouter);
 app.use("/location", locationRouter);
-
-// firestore.getData("자연관광", "").then((result) => {});
 
 const onSocketError = (error) => {
   console.log(error);

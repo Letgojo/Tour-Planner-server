@@ -9,6 +9,7 @@ const {
   onAuthStateChanged,
   updateProfile,
   updatePassword,
+  deleteUser,
 } = require("firebase/auth");
 
 const firebaseAdmin = require("firebase-admin/auth");
@@ -91,4 +92,10 @@ exports.changePassword = async (newPassword) => {
 exports.updateProfile = async (userName) => {
   const user = getAuth().currentUser;
   return await updateProfile(user, { displayName: userName });
+};
+
+// 회원 삭제
+exports.deleteUser = async () => {
+  const user = getAuth().currentUser;
+  return await deleteUser(user);
 };
