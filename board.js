@@ -89,7 +89,7 @@ router.delete("/post/:id", (req, res) => {
 
 router.post("/reply", (req, res) => {
   const data = req.body;
-  data.date = Date.now()
+  data.date = Date.now();
 
   firestore
     .addData("reply", data)

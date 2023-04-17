@@ -57,7 +57,6 @@ router.post("/login", (req, res) => {
             console.log("Sign In Succeeded");
             res.status(200).send(data);
           });
-          
         });
       }
     })
@@ -91,11 +90,10 @@ router.get("/search-user", (req, res) => {
   firestore
     .getData("회원정보", options)
     .then((result) => {
-
-      result.forEach(doc => {
+      result.forEach((doc) => {
         console.log("find user!");
         res.status(200).send(doc.data());
-      })
+      });
     })
     .catch((error) => {
       res.status(404).send({ message: error.message });
@@ -108,6 +106,8 @@ router.patch("/settings", (req, res) => {
   const options = req.body;
 
   if (options.newPassword) {
+    console.log(options.newPassword);
+    console.log("in!!");
     firebase
       .changePassword(options.newPassword)
       .then(() => {
@@ -115,17 +115,19 @@ router.patch("/settings", (req, res) => {
         res.sendStatus(200);
       })
       .catch((error) => {
-        console.log(error.message);
+        console.log(error);
         res.status(400).send({ message: error.message });
       });
   }
 
   if (options.phoneNum || options.userName) {
     const uid = options.uid;
-    delete options.uid;
-    delete options.password;
 
-    console.log(options);
+    for (const x in options) {
+      if (!options[x]) {
+        delete options[x];
+      }
+    }
 
     firestore
       .updateData("회원정보", uid, options)
