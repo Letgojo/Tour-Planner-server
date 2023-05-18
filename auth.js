@@ -175,7 +175,26 @@ router.patch("/settings", (req, res) => {
  *  회원 탈퇴
  *
  */
-router.delete("/delete-user", (req, res) => {});
+router.post("/delete-user", (req, res) => {
+  const options = req.body;
+
+  firebase
+    .deleteUser(options)
+    .then((result) => {
+      console.log("user deleted!");
+      // firestore
+      //   .deleteData("회원정보", options.email)
+      //   .then(() => {})
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      //console.log(error);
+      res.sendStatus(400);
+    });
+});
 
 /*
  *
