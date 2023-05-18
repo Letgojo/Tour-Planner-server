@@ -106,4 +106,3 @@ config/
 Dockerfile
 .dockerignore
 test.js
-encrypt.js
