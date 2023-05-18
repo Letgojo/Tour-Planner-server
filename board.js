@@ -14,7 +14,7 @@ const router = require("express").Router();
 
 router.post("/post", (req, res) => {
   const data = req.body;
-  data.date = "" + Date.now();
+  data.date = Date.now();
 
   firestore
     .addData("post", data)

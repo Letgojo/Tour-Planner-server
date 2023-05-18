@@ -64,7 +64,6 @@ exports.getData = async (project, options) => {
     const docPages = Number(options.pages);
 
     if (options.docId) {
-      // 나중에 DB 커서 적용해서 제대로 고쳐야 함
       const docRef = db.collection(project).doc(options.docId);
       const snapshot = await docRef.get();
       const startAtSnapshot = db
@@ -85,7 +84,7 @@ exports.getData = async (project, options) => {
     return await db
       .collection(project)
       .where("docId", "==", options.docId)
-      .orderBy("date", "desc")
+      .orderBy("date", "asc")
       .get();
   } else if (project === "회원정보") {
     if (options.email) {
@@ -100,6 +99,14 @@ exports.getData = async (project, options) => {
       .doc(options.city)
       .collection(options.district)
       .get();
+  } else if (project === "음식점") {
+    return await db
+      .collection(project)
+      .doc(options.city)
+      .collection(options.district)
+      .get();
+  } else if (project === "카테고리") {
+    // 카테고리 검색해서 해당하는 카테고리만 뜨게 하기
   }
 };
 

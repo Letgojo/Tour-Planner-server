@@ -6,10 +6,11 @@ const {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   sendEmailVerification,
-  onAuthStateChanged,
   updateProfile,
   updatePassword,
   deleteUser,
+  reauthenticateWithCredential,
+  signOut,
 } = require("firebase/auth");
 
 const firebaseAdmin = require("firebase-admin/auth");
@@ -17,6 +18,7 @@ const firebaseAdmin = require("firebase-admin/auth");
 const { initializeApp } = require("firebase/app");
 
 const firebaseConfig = require("./config/firebaseConfig");
+const { firestore } = require("firebase-admin");
 
 const app = initializeApp(firebaseConfig.settingValues);
 
@@ -38,36 +40,6 @@ exports.signUpEmail = (email, password, userName) => {
         reject(error);
       });
   });
-};
-
-////// jwt 토큰 생성 //////
-
-exports.createToken = (uid) => {
-  // return new Promise((resolve, reject) => {
-  //   const auth = getAuth();
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       console.log("already");
-  //     } else {
-  //     }
-  //   });
-  // });
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     console.log(user.email);
-  //   }
-  // });
-  // firebaseAdmin
-  //   .getAuth()
-  //   .createCustomToken(uid)
-  //   .then((result) => {
-  //     const jwt = result.toString();
-  //     console.log(jwt);
-  //     return jwt;
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //   });
 };
 
 // email 로그인
@@ -94,8 +66,34 @@ exports.updateProfile = async (userName) => {
   return await updateProfile(user, { displayName: userName });
 };
 
-// 회원 삭제
-exports.deleteUser = async () => {
+// 회원 재인증
+exports.reauthenticateUser = (email, password) => {
   const user = getAuth().currentUser;
-  return await deleteUser(user);
+
+  return new Promise((resolve, reject) => {
+    this.signinEmail(email, password)
+      .then((result) => {
+        reauthenticateWithCredential(user, result);
+        resolve(result);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// 회원 삭제
+exports.deleteUser = async (options) => {
+  this.signinEmail(options.email, options.password)
+    .then((result) => {
+      const user = getAuth().currentUser;
+      return deleteUser(user);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+exports.signOut = async () => {
+  return await signOut(getAuth());
 };

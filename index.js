@@ -9,11 +9,12 @@ const locationRouter = require("./location");
 const firestore = require("./firestore");
 
 const { WebSocketServer } = require("ws");
-const { constrainedMemory } = require("process");
+const encrypt = require("./encrypt");
+
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ clientTracking: false, noServer: true });
-const port = 50020;
+const port = 8080;
 
 app.use(express.json());
 
@@ -21,9 +22,7 @@ app.use("/", authRouter);
 app.use("/board", boardRouter);
 app.use("/location", locationRouter);
 
-const onSocketError = (error) => {
-  console.log(error);
-};
+// encrypt.createRsaKey();
 
 // server.on("upgrade", function (request, socket, head) {
 //   socket.on("error", onSocketError);
