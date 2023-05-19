@@ -47,13 +47,16 @@ router.get("/restaurant", (req, res) => {
 });
 
 router.get("/recommand-route", (req, res) => {
+  // 관광 타입마다 골고루 섞어서 넣기
   const options = req.query;
+  //options.days = 3;
+  let jsonResult = [];
+  let randomList = [];
+  let restaurantList = [];
+
   firestore
     .getData(options.tourType, options)
     .then((result) => {
-      let jsonResult = [];
-      let randomList = [];
-
       result.forEach((doc) => {
         const temp = doc.data();
         jsonResult.push(temp);
@@ -61,8 +64,29 @@ router.get("/recommand-route", (req, res) => {
 
       shuffle(jsonResult);
 
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < options.days * 2; i++) {
         randomList[i] = jsonResult[i];
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+
+  firestore
+    .getData("음식점", options)
+    .then((result) => {
+      result.forEach((doc) => {
+        const temp = doc.data();
+
+        temp["이름"] = doc.id;
+        restaurantList.push(temp);
+      });
+
+      shuffle(restaurantList);
+
+      for (let i = 0; i < options.days * 3; i++) {
+        randomList.push(restaurantList[i]);
       }
 
       res.status(200).send(randomList);
