@@ -12,7 +12,12 @@ router.get("/tour", (req, res) => {
       let jsonResult = [];
 
       result.forEach((doc) => {
-        jsonResult.push(doc.data());
+        let temp = doc.data();
+        temp["주소"] = doc.data()["장소"];
+        temp["이름"] = doc.data()["관광지명"];
+        delete temp["관광지명"];
+        delete temp["장소"];
+        jsonResult.push(temp);
       });
 
       res.status(200).send(jsonResult);
@@ -58,7 +63,11 @@ router.get("/recommand-route", (req, res) => {
     .getData(options.tourType, options)
     .then((result) => {
       result.forEach((doc) => {
-        const temp = doc.data();
+        let temp = doc.data();
+        temp["주소"] = doc.data()["장소"];
+        temp["이름"] = doc.data()["관광지명"];
+        delete temp["관광지명"];
+        delete temp["장소"];
         jsonResult.push(temp);
       });
 
