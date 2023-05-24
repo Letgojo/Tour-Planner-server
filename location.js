@@ -64,6 +64,7 @@ router.get("/recommand-route", (req, res) => {
     .then((result) => {
       result.forEach((doc) => {
         let temp = doc.data();
+        temp["타입"] = options.tourType;
         temp["주소"] = doc.data()["장소"];
         temp["이름"] = doc.data()["관광지명"];
         delete temp["관광지명"];
@@ -89,6 +90,7 @@ router.get("/recommand-route", (req, res) => {
         const temp = doc.data();
 
         temp["이름"] = doc.id;
+        temp["타입"] = "음식점";
         restaurantList.push(temp);
       });
 
