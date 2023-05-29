@@ -109,6 +109,21 @@ router.get("/recommand-route", (req, res) => {
     });
 });
 
+router.post("/send-route", (req, res) => {
+  const options = req.body;
+
+  firestore
+    .addData("result_test", options)
+    .then((result) => {
+      console.log("route Send Succeeded!!");
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).send(error);
+    });
+});
+
 function shuffle(array) {
   for (let index = array.length - 1; index > 0; index--) {
     const randomPosition = Math.floor(Math.random() * (index + 1));
