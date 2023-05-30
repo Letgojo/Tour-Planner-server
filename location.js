@@ -127,6 +127,21 @@ router.post("/send-route", (req, res) => {
     });
 });
 
+router.get("/route-result", (req, res) => {
+  const options = req.query;
+
+  firestore
+    .getData("result_test", options)
+    .then((result) => {
+      res.status(200).send(result.data());
+      console.log("route result Sended!");
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(400);
+    });
+});
+
 function shuffle(array) {
   for (let index = array.length - 1; index > 0; index--) {
     const randomPosition = Math.floor(Math.random() * (index + 1));

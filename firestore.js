@@ -107,6 +107,8 @@ exports.getData = async (project, options) => {
       .get();
   } else if (project === "카테고리") {
     // 카테고리 검색해서 해당하는 카테고리만 뜨게 하기
+  } else if (project === "result_test") {
+    return await db.collection(project).doc(options.docId).get();
   }
 };
 
