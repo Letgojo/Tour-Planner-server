@@ -133,7 +133,14 @@ router.get("/route-result", (req, res) => {
   firestore
     .getData("result_test", options)
     .then((result) => {
-      res.status(200).send(result.data());
+      let jsonResult = [];
+
+      result.forEach((doc) => {
+        const temp = doc.data();
+
+        jsonResult.push(temp);
+      });
+      res.status(200).send(jsonResult);
       console.log("route result Sended!");
     })
     .catch((error) => {

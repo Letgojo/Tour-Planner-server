@@ -14,7 +14,7 @@ const encrypt = require("./encrypt");
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ clientTracking: false, noServer: true });
-const port = 3000;
+const port = 8080;
 
 app.use(express.json());
 
