@@ -5,25 +5,26 @@ const http = require("http");
 const boardRouter = require("./board");
 const authRouter = require("./auth");
 const locationRouter = require("./location");
+const vae = require("./vae");
 
 const firestore = require("./firestore");
 
 const { WebSocketServer } = require("ws");
-const { constrainedMemory } = require("process");
+const encrypt = require("./encrypt");
+
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ clientTracking: false, noServer: true });
-const port = 50020;
+const port = 3000;
 
 app.use(express.json());
 
 app.use("/", authRouter);
 app.use("/board", boardRouter);
 app.use("/location", locationRouter);
+app.use("/vae", vae);
 
-const onSocketError = (error) => {
-  console.log(error);
-};
+// encrypt.createRsaKey();
 
 // server.on("upgrade", function (request, socket, head) {
 //   socket.on("error", onSocketError);

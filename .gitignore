@@ -105,3 +105,4 @@ dist
 config/
 Dockerfile
 .dockerignore
+test.js

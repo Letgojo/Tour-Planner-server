@@ -64,7 +64,6 @@ exports.getData = async (project, options) => {
     const docPages = Number(options.pages);
 
     if (options.docId) {
-      // 나중에 DB 커서 적용해서 제대로 고쳐야 함
       const docRef = db.collection(project).doc(options.docId);
       const snapshot = await docRef.get();
       const startAtSnapshot = db
@@ -85,7 +84,7 @@ exports.getData = async (project, options) => {
     return await db
       .collection(project)
       .where("docId", "==", options.docId)
-      .orderBy("date", "desc")
+      .orderBy("date", "asc")
       .get();
   } else if (project === "회원정보") {
     if (options.email) {
@@ -100,6 +99,33 @@ exports.getData = async (project, options) => {
       .doc(options.city)
       .collection(options.district)
       .get();
+  } else if (project === "음식점") {
+    return await db
+      .collection(project)
+      .doc(options.city)
+      .collection(options.district)
+      .get();
+  } else if (project === "카테고리") {
+    // 카테고리 검색해서 해당하는 카테고리만 뜨게 하기
+  } else if (project === "result_test") {
+    return await db.collection(project).where("uuid", "==", options.uuid).get();
+  } else if (project === "음식점 정보") {
+    return await db
+      .collection("food_img_metadata2")
+      .where("이름", "==", options.name)
+      .get();
+  } else if (project === "지역정보") {
+    return await db
+      .collection("img_metadata2")
+      .where("이름", "==", options.name) // 수정
+      .get();
+  } else if (project === "클러스터 결과") {
+    let result = [];
+    for (let i = 0; i < 5; i++) {
+      const temp = await db.collection("fake_cluster").doc(i.toString()).get();
+      result.push(temp.data());
+    }
+    return result;
   }
 };
 
