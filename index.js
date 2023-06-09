@@ -5,6 +5,7 @@ const http = require("http");
 const boardRouter = require("./board");
 const authRouter = require("./auth");
 const locationRouter = require("./location");
+const vae = require("./vae");
 
 const firestore = require("./firestore");
 
@@ -14,13 +15,14 @@ const encrypt = require("./encrypt");
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ clientTracking: false, noServer: true });
-const port = 8080;
+const port = 3000;
 
 app.use(express.json());
 
 app.use("/", authRouter);
 app.use("/board", boardRouter);
 app.use("/location", locationRouter);
+app.use("/vae", vae);
 
 // encrypt.createRsaKey();
 
